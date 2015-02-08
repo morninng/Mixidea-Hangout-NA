@@ -67,6 +67,12 @@ function Mixidea_Event(){
 	if(!this.local.complete_count){
 		this.local.complete_count = 0;
 	}
+	this.local.init_complete=false;
+
+	this.local.refresh_count = Number(gapi.hangout.data.getValue("refresh_count"));
+	if(!this.local.refresh_count){
+		this.local.refresh_count = 0;
+	}
 
 	this.obj = {};	
 	this.obj.event = null;
@@ -217,7 +223,9 @@ Mixidea_Event.prototype.Check_OwnRole_and_Share = function(){
 
 	for(j=0;j<6;j++){
 		self.participants_obj[j] = self.obj.event.get(parse_role_name[j]);
+		console.log("number is " +j );
 		if(self.participants_obj[j]){
+			console.log("id is " + self.participants_obj[j].id);
 			if(self.participants_obj[j].id == self.info.user_id){
 				gapi.hangout.data.setValue( hangout_role_name[j], self.local.Participant_Id);
 				self.local.ownrole_number.push(j);
@@ -281,11 +289,13 @@ Mixidea_Event.prototype.prepareDOM_ParticipantField_NA = function(){
 	var participant_container = $("<div>");
 	participant_container.attr({'align':'center'});
 
+	console.log("prepare dom participant na");
+
 	for(i=0;i<6;i++){
 		eachfeed_td[i] = $("<td>");
 
 
-
+		console.log("paricipant number = " +  i);
 		if(self.participants_profile_EachRole[i].existence_flag){
 
 			eachfeed_element[i] = $("<div>");
@@ -298,9 +308,11 @@ Mixidea_Event.prototype.prepareDOM_ParticipantField_NA = function(){
 			var role_identifier = gapi.hangout.data.getValue( hangout_role_name[i] );
 			if(role_identifier && self.hangout_id_exist(role_identifier)){
 				eachfeed_td[i].attr({'bgcolor': '99CC00'});
+				console.log("user loged in id is " + role_identifier);
 			}else{
 				profile_name_element[i].append("<br>not yet login"); 
 				eachfeed_td[i].attr({'bgcolor': 'C0C0C0'});
+				console.log("user not yet login id is " + role_identifier);
 			}
 			eachfeed_element[i].append(profile_pict_element[i]);
 			eachfeed_element[i].append(profile_name_element[i]);
@@ -310,6 +322,7 @@ Mixidea_Event.prototype.prepareDOM_ParticipantField_NA = function(){
 			eachfeed_element[i] = $("<div>");
 			eachfeed_element[i].attr({'id': role_name[i]});
 			eachfeed_element[i].append("no one has applied");
+			console.log("no one has applied");
 
 		}
 
@@ -366,13 +379,16 @@ Mixidea_Event.prototype.prepareDOM_ParticipantField_NA = function(){
 		console.log("refresh participant button is clicked");
 		//update participant field
 
-		
+		var refresh_count = gapi.hangout.data.getValue("refresh_count");
+		var num_refresh = Number(refresh_count);
 
-		self.Check_OwnRole_and_Share();
-		self.RetrieveParticipantsData_on_Event_NA().then(function(){
-			self.prepareDOM_ParticipantField_NA();
-			self.check_hangoutid_for_each_role();
-		});
+		if(isNaN(num_refresh)){
+			num_refresh = self.local.refresh_count;
+		}
+		num_refresh++;
+		refresh_count = String(num_refresh);
+		gapi.hangout.data.setValue("refresh_count", refresh_count);
+
 
 	})
 
@@ -776,12 +792,17 @@ Mixidea_Event.prototype.DrawVideoFeed = function(){
 
 Mixidea_Event.prototype.init_setting_comoplete = function(){
 
+	var self = this;
 
 	var complete_count = gapi.hangout.data.getValue("complete_count");
 	var num_count = Number(complete_count);
+	if(isNaN(num_count)){
+		num_count = self.local.complete_count;
+	}
 	num_count++;
 	complete_count = String(num_count);
 	gapi.hangout.data.setValue("complete_count", complete_count);
+	self.local.init_complete=true;
 
 }
 
@@ -825,6 +846,11 @@ Mixidea_Event.prototype.StopTimer = function(){
 Mixidea_Event.prototype.UpdateMixideaStatus = function(){
 
 	self = this;
+	if(!self.local.init_complete){
+		return;
+	}
+
+
 	var hangout_status = gapi.hangout.data.getState();
 	console.log("hangout_status");
 	console.log(JSON.stringify(hangout_status));
@@ -937,13 +963,23 @@ Mixidea_Event.prototype.UpdateMixideaStatus = function(){
 
 	/////////initialization of the participant has been finished ///////////
 
-	var current_complete_cuont = Number(gapi.hangout.data.getValue("complete_count"));
-	if(self.local.complete_count != current_complete_cuont){
+	var current_complete_count = Number(gapi.hangout.data.getValue("complete_count"));
+	if(current_complete_count && (self.local.complete_count != current_complete_count)){
 		self.prepareDOM_ParticipantField_NA();
+		self.local.complete_count = current_complete_count;
 	}
 
-	/////////
+	///////// refresh the user info from the server /////////
 
+	var current_refresh_count = Number(gapi.hangout.data.getValue("refresh_count"));
+		if(current_refresh_count && (self.local.refresh_count != current_refresh_count )){
+			self.Check_OwnRole_and_Share();
+			self.RetrieveParticipantsData_on_Event_NA().then(function(){
+				//wait one seconds and update the participant field
+				setTimeout("self.prepareDOM_ParticipantField_NA()",1000);
+				self.local.refresh_count = current_refresh_count;
+			});
+		}
 	
 }
 
