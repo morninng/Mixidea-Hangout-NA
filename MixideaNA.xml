@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="Skelton">
+    <Require feature="rpc"/>
+    <Require feature="views"/>
+  </ModulePrefs>
+  <Content type="html">
+
+<![CDATA[ 
+
+<script type="text/javascript" src="//plus.google.com/hangouts/_/api/v1/hangout.js">
+</script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="//mixidea-hangout.parseapp.com/MixideaNA.css">
+
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+<script src="//www.parsecdn.com/js/parse-1.3.2.min.js"></script>
+
+<script type="text/javascript" src="//mixidea-hangout.parseapp.com/model/mixidea_user.js"></script>
+
+<script type="text/javascript" src="//mixidea-hangout.parseapp.com/model/mixidea_event.js"></script>
+
+<script type="text/javascript" src="//mixidea-hangout.parseapp.com/MixideaNA.js"></script>
+
+
+
+
+<body style="padding: 10px">
+
+<div id = "event-title">
+	<div id = "event_left"></div>
+	<div id = "event_right"></div>
+</div>
+
+<div id="container_main">
+	<div id="container_left_pain">
+		<div id="speech_status"></div>
+		<div id="speech_time"></div>
+	</div>
+	<div id="container_center_right_pain">
+		<div id="container_center_pain">
+			<div id="personal_feed">
+				<div id="personal_control_1"></div>
+				<div id="personal_control_2"></div>
+				<div id="partner_message"></div>
+			</div>
+		</div>
+		<div id="container_right_pain">
+			<div id="common_feed"></div>  
+		</div>
+	</div>
+</div>
+
+
+<span id="hangout_link"></span>
+
+
+<script>
+  window.onload = init(); 
+</script>
+
+]]>
+  </Content>
+</Module>
