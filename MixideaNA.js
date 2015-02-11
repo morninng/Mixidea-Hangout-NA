@@ -118,6 +118,7 @@ Mixidea_Event.prototype.initial_setting = function(){
 		self.Get_group_member_id();
 		self.PrepareDom_forPersonalFeed()
 		self.DrawVideoFeed();
+		self.PrepareDom_for_chat_field();
 		self.init_setting_comoplete();
 	});
 }
@@ -461,7 +462,7 @@ Mixidea_Event.prototype.PrepareDom_forPersonalFeed_Discussion = function(){
 		StartSpeech_button_elements.append("<br><br>");	
 	}
 
-	$("div#personal_control_1").append("<h3>Click to be a speaker</h3>");
+	$("div#personal_control_1").append("<h4>Click to be a speaker</h4>");
 	$("div#personal_control_1").append(StartSpeech_button_elements);
 	
 	$("button#" + role_button_id[0] ).click(function(){
@@ -487,7 +488,7 @@ Mixidea_Event.prototype.PrepareDom_forPersonalFeed_Discussion = function(){
 	$("button#" + role_button_id[2] ).click(function(){
 			console.log(hangout_role_name[2])
 			gapi.hangout.data.submitDelta({
-			"CurrentSpeakerId": self.local.Participant_Id,
+			"CurrentSpeakerId": self.local.Participant_Id,    
 			"CurrentSpeakerRole": hangout_role_name[2],
 			"CurrentSpeakerName": self.local.own_name
 			});
@@ -817,6 +818,53 @@ Mixidea_Event.prototype.DrawVideoFeed = function(){
  	self.canvas.setVisible(true);
 }
 
+Mixidea_Event.prototype.PrepareDom_for_chat_field = function(){
+
+	var self = this;
+	var chat_input_field_container = $("<div>");
+	chat_input_field_container.attr({'id':'chat_input_field'});
+	chat_input_field_container.attr({'style':'margin: 3px 2px 3px 2px'});
+	chat_input_field_container.append("<h4>communication with partner</h4>");
+
+//	var chat_form_element = $("<form/>");
+//	chat_form_element.attr({'name':'chat_send_form'})
+//	chat_form_element.attr({'id':'chat_form_id'})
+
+	var chat_input_element =  $("<input/>");
+	chat_input_element.attr({'type':'text'});
+	chat_input_element.attr({'id':'chat_input_id'});
+	chat_input_element.attr({'style':'width:98%'});
+	chat_input_element.attr({'align':'center'});
+	chat_input_element.attr({'placeholder':'message to partner'});
+
+	var communication_button = $("<button/>");
+	communication_button.attr({'id':"communication_with_partner"});
+	communication_button.append("send message");
+
+	var chat_display_container = $("<div/>");
+	chat_display_container.attr({'id':"display_container"});
+	chat_display_container.attr({'style':'border:1px solid; height:100px; overflow:scroll;'});
+
+	chat_input_field_container.append(chat_input_element);
+	chat_input_field_container.append(communication_button);
+
+	$("div#chat_field").append(chat_input_field_container);
+	$("div#chat_field").append(chat_display_container);
+
+
+	$("button#communication_with_partner").click(function(){
+
+//		var message_to_partner = document.forms.chat_form_id.chat_input_id.value;
+//		console.log(message_to_partner);
+		console.log("aaaaaaaaaaaaaaaaaaaaaa");
+		gapi.hangout.data.sendMessage("aaaaaaaaa");
+
+	})
+
+}
+
+
+
 
 Mixidea_Event.prototype.init_setting_comoplete = function(){
 
@@ -1037,6 +1085,17 @@ Mixidea_Event.prototype.ParticipantsChanged = function(changed_participants){
 
 }
 
+Mixidea_Event.prototype.receive_message = function(received_message){
+
+	self = this;
+	console.log("message is received");
+	console.log(received_message.message);
+	console.log(received_message.senderId);
+ 
+
+}
+
+
 
 function init() {
   gapi.hangout.onApiReady.add(function(e){
@@ -1050,6 +1109,11 @@ function init() {
         gapi.hangout.onParticipantsChanged.add(function(participant_change) {
           mixidea_object.ParticipantsChanged(participant_change);
         });
+
+        gapi.hangout.data.onMessageReceived.add(function(received_message) {
+          mixidea_object.receive_message(received_message);
+        });
+
     }
   });
 }

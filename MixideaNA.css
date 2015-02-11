@@ -47,23 +47,61 @@
 	float: left;
 }
 
+
+
+
+
+
+
+
+
 #container_center_pain {
-	background-color: #CCCCFF;
 	width: 300px;
 	margin: 2px;
 	float: left;
 }
-#personal_control_1 {
-	background-color: #DDDDFF;
-	width: 280px;
-	margin: 10px;
-}
 
-#personal_control_2 {
-	background-color: #EEEEFF;
-	width: 280px;
-	margin: 10px;
-}
+	#personal_feed {
+		background-color: #CCCCFF;
+		width: 300px;
+		margin: 4px 4px 4px 4px;
+	}
+
+		#personal_control_1 {
+			background-color: #DDDDFF;
+			width: 280px;
+			margin: 10px 10px 10px 10px;
+		}
+
+		#personal_control_2 {
+			background-color: #EEEEFF;
+			width: 280px;
+			margin: 10px 10px 10px 10px;
+		}
+
+	#partner_message {
+		background-color: #CCCC00;
+		width: 300px;
+		margin: 4px 4px 4px 4px;
+	}
+
+		#partner_hangout {
+			background-color: #DDDDFF;
+			width: 280px;
+			margin: 10px;
+		}
+
+		#chat_field {
+			background-color: #EEEEFF;
+			width: 280px;
+			margin: 10px;
+		}
+
+
+
+
+
+
 
 #container_right_pain {
 	background-color: #CCFFCC;

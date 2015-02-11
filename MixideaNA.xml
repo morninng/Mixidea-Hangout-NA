@@ -47,7 +47,10 @@
 			<div id="personal_feed">
 				<div id="personal_control_1"></div>
 				<div id="personal_control_2"></div>
-				<div id="partner_message"></div>
+			</div>
+			<div id="partner_message">
+				<div id="partner_hangout"></div>
+				<div id="chat_field"></div>
 			</div>
 		</div>
 		<div id="container_right_pain">
