@@ -1,11 +1,11 @@
 	var parse_role_name = new Array("PrimeMinister","LeaderOpposition","MemberGovernment","MemberOpposition","ReplyPM","LOReply");
-	var hangout_role_name = new Array("PrimeMinister","LeaderOpposition","MemberGovernment","MemberOpposition","ReplyPM","LOReply");
+	var hangout_role_name = new Array("PrimeMinister","LeaderOpposition","MemberGovernment","MemberOpposition","ReplyPM","LOReply","Audience1","Audience2","Audience3","Audience4");
 	var role_button_id = new Array("btn_PrimeMinister","btn_LeaderOpposition","btn_MemberGovernment","btn_MemberOpposition","btn_ReplyPM","btn_LOReply");
 	var role_speaker = new Array("speaker_PrimeMinister","speaker_LeaderOpposition","speaker_MemberGovernment","speaker_MemberOpposition","speaker_ReplyPM","speaker_LOReply");
 	var hangout_POI_role = new Array("Poi_PM","Poi_LO","Poi_MG","Poi_MO","PoiRPM","Poi_LOR");
 	var poi_button_name = new Array("bt_Poi_PM","bt_Poi_LO","bt_Poi_MG","bt_Poi_MO","bt_PoiRPM","bt_Poi_LOR");
+	var Participant_Role_Group = new Array("Proposition", "Opposition","Proposition", "Opposition","Proposition", "Opposition","Audience","Audience","Audience","Audience","Audience","Audience","Audience","Audience");
 
-//	enum ROUND_MODE(SPEAKER, DISCUSSION,AUDIENCE,POI_TAKEN_SPEAKER, POE_TAKEN_AUDIENE, POI_SPEAKER);
 
 Mixidea_Event.prototype.check_hangout_Poi_status = function(){
 	for(i=0;i<6;i++){
@@ -41,6 +41,7 @@ Mixidea_Event.prototype.check_hangoutid_for_each_role = function(){
 	var RLO_id = gapi.hangout.data.getValue("RoleID_RLO");
 	console.log("RLO_id is " + RLO_id + "RLO name is " + self.participants_profile_EachRole[5].FirstName);
 } 
+
 
 
 function Mixidea_Event(){
@@ -96,8 +97,13 @@ function Mixidea_Event(){
 	this.speech_duration = 0;
 	this.speech_timer = [];
 	this.event_title = "";
+	this.group_partner_hangout_id = [];
+	this.own_group = "";
 
 }
+
+
+/////////////initial setting ///////////
 
 Mixidea_Event.prototype.initial_setting = function(){
 
@@ -109,13 +115,13 @@ Mixidea_Event.prototype.initial_setting = function(){
 		return self.RetrieveParticipantsData_on_Event_NA();
 	}).then(function(){
 		self.prepareDOM_ParticipantField_NA();
+		self.Get_group_member_id();
 		self.PrepareDom_forPersonalFeed()
 		self.DrawVideoFeed();
 		self.init_setting_comoplete();
 	});
 }
 
-/////////////initial setting ///////////
 
 Mixidea_Event.prototype.SetEventURL = function(){
 	console.log("SetEventURL");
@@ -229,6 +235,7 @@ Mixidea_Event.prototype.Check_OwnRole_and_Share = function(){
 			if(self.participants_obj[j].id == self.info.user_id){
 				gapi.hangout.data.setValue( hangout_role_name[j], self.local.Participant_Id);
 				self.local.ownrole_number.push(j);
+				self.own_group = Participant_Role_Group[j];
 			}
 		}
 	}
@@ -394,6 +401,27 @@ Mixidea_Event.prototype.prepareDOM_ParticipantField_NA = function(){
 
 
 }
+
+Mixidea_Event.prototype.Get_group_member_id = function(){
+
+	console.log("Get_group_member_id");
+	var self = this;
+
+	self.group_partner_hangout_id.splice(0);
+
+	console.log("own group is " + self.own_group);
+
+	for(i=0;i<9;i++){
+		var role_id = gapi.hangout.data.getValue(hangout_role_name[i]);
+		console.log("role id " + i + " = " + role_id + " of group is " + Participant_Role_Group[i]);
+		if( Participant_Role_Group[i] == self.own_group && self.hangout_id_exist(role_id) ){
+			self.group_partner_hangout_id.push(role_id);
+			console.log("group member " + i + " = " + role_id);
+		}
+	}
+}
+
+
 
 Mixidea_Event.prototype.PrepareDom_forPersonalFeed = function(){
 
@@ -977,12 +1005,11 @@ Mixidea_Event.prototype.UpdateMixideaStatus = function(){
 			self.RetrieveParticipantsData_on_Event_NA().then(function(){
 				//wait one seconds and update the participant field
 				setTimeout("self.prepareDOM_ParticipantField_NA()",1000);
+				setTimeout("self.Get_group_member_id()",1000);
 				self.local.refresh_count = current_refresh_count;
 			});
 		}
-	
 }
-
 
 
 //change
@@ -1004,6 +1031,10 @@ Mixidea_Event.prototype.ParticipantsChanged = function(changed_participants){
 	self.RetrieveParticipantsData_on_Event_NA().then(function(){
 		self.prepareDOM_ParticipantField_NA();
 	});
+
+	/////group member update
+	self.Get_group_member_id();
+
 }
 
 
