@@ -826,9 +826,6 @@ Mixidea_Event.prototype.PrepareDom_for_chat_field = function(){
 	chat_input_field_container.attr({'style':'margin: 3px 2px 3px 2px'});
 	chat_input_field_container.append("<h4>communication with partner</h4>");
 
-//	var chat_form_element = $("<form/>");
-//	chat_form_element.attr({'name':'chat_send_form'})
-//	chat_form_element.attr({'id':'chat_form_id'})
 
 	var chat_input_element =  $("<input/>");
 	chat_input_element.attr({'type':'text'});
@@ -853,17 +850,14 @@ Mixidea_Event.prototype.PrepareDom_for_chat_field = function(){
 
 
 	$("button#communication_with_partner").click(function(){
-
-//		var message_to_partner = document.forms.chat_form_id.chat_input_id.value;
-//		console.log(message_to_partner);
-		console.log("aaaaaaaaaaaaaaaaaaaaaa");
-		gapi.hangout.data.sendMessage("aaaaaaaaa");
+		var message_to_partner = document.getElementById("chat_input_id").value
+		console.log(message_to_partner);
+		gapi.hangout.data.sendMessage(message_to_partner);
+		chat_display_container.append("you: " + message_to_partner);
+		chat_display_container.append("<br>");
 
 	})
-
 }
-
-
 
 
 Mixidea_Event.prototype.init_setting_comoplete = function(){
@@ -1043,6 +1037,7 @@ Mixidea_Event.prototype.UpdateMixideaStatus = function(){
 	if(current_complete_count && (self.local.complete_count != current_complete_count)){
 		self.prepareDOM_ParticipantField_NA();
 		self.local.complete_count = current_complete_count;
+		self.Get_group_member_id();
 	}
 
 	///////// refresh the user info from the server /////////
@@ -1088,14 +1083,26 @@ Mixidea_Event.prototype.ParticipantsChanged = function(changed_participants){
 Mixidea_Event.prototype.receive_message = function(received_message){
 
 	self = this;
+	var partner = false;
 	console.log("message is received");
 	console.log(received_message.message);
 	console.log(received_message.senderId);
- 
+
+	var chat_display_container = document.getElementById("display_container");
+	console.log(received_message.message);
+
+	for(i=0;i<self.group_partner_hangout_id.length;i++){
+		if(self.group_partner_hangout_id[i] == received_message.senderId){
+			partner = true;
+		}
+	}
+	
+	if(partner){
+		$("#display_container").append("partner: " + received_message.message);
+		$("#display_container").append("<br>");
+	}
 
 }
-
-
 
 function init() {
   gapi.hangout.onApiReady.add(function(e){
