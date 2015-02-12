@@ -850,12 +850,12 @@ Mixidea_Event.prototype.PrepareDom_for_chat_field = function(){
 
 
 	$("button#communication_with_partner").click(function(){
-		var message_to_partner = document.getElementById("chat_input_id").value
+		var message_to_partner = document.getElementById("chat_input_id").value;
 		console.log(message_to_partner);
 		gapi.hangout.data.sendMessage(message_to_partner);
 		chat_display_container.append("you: " + message_to_partner);
 		chat_display_container.append("<br>");
-
+		chat_display_container.scrollTop(chat_display_container[0].scrollHeight)
 	})
 }
 
@@ -1100,6 +1100,7 @@ Mixidea_Event.prototype.receive_message = function(received_message){
 	if(partner){
 		$("#display_container").append("partner: " + received_message.message);
 		$("#display_container").append("<br>");
+		$("#display_container").scrollTop($("#display_container")[0].scrollHeight);
 	}
 
 }
